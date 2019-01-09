@@ -61,7 +61,7 @@ func New(appId string, appSecret string, url string) wxconfig {
 	return wx
 }
 
-//创建类方法获取jssdk配置项目 返回json串
+// 创建类方法获取jssdk配置项目 返回json串
 func (wx wxconfig) GetWechatConfig() string {
 	appid = wx.appId
 	appsecret = wx.appSecret
@@ -81,12 +81,12 @@ func (wx wxconfig) GetWechatConfig() string {
 	return string(data)
 }
 
-//函数首字母小写 表示私有
+// 函数首字母小写 表示私有
 func getJsApiTicket() string {
 	fmt.Printf("获取getJsApiTicket\n")
-	//获取ticket内容
+	// 获取ticket内容
 	json_str := readFile("./jssdk/ticket.txt")
-	//解析json串
+	// 解析json串
 	j := json1{}
 	err := json.Unmarshal([]byte(json_str), &j)
 	if err != nil {
@@ -96,8 +96,8 @@ func getJsApiTicket() string {
 	expire_time := j.Expire_time
 	jsapi_ticket := j.Jsapi_ticket
 	if expire_time < timestamp() {
-		//ticket过期需要从新获取
-		//获取access_token生成ticket
+		// ticket过期需要从新获取
+		// 获取access_token生成ticket
 		access_token := getAccessToken()
 		fmt.Println(access_token)
 		if access_token == "" {
@@ -108,7 +108,7 @@ func getJsApiTicket() string {
 
 		body, _ := ioutil.ReadAll(resp.Body)
 		fmt.Println(string(body))
-		//解析body
+		// 解析body
 		ticket := ticket{}
 		err := json.Unmarshal([]byte(body), &ticket)
 		if err != nil {
@@ -131,7 +131,7 @@ func getJsApiTicket() string {
 	return jsapi_ticket
 }
 
-//写文件"./jssdk/ticket.txt"
+// 写文件"./jssdk/ticket.txt"
 func setFile(ticket string, filename string) bool {
 	d1 := []byte(ticket)
 	err := ioutil.WriteFile(filename, d1, 0644)
@@ -142,7 +142,7 @@ func setFile(ticket string, filename string) bool {
 	return true
 }
 
-//读取文件内容
+// 读取文件内容
 func readFile(filename string) string {
 	data, err := ioutil.ReadFile(filename)
 	if err != nil {
@@ -153,11 +153,11 @@ func readFile(filename string) string {
 	return string(data)
 }
 
-//获取access token
+// 获取access token
 func getAccessToken() string {
-	//获取ticket内容
+	// 获取ticket内容
 	json_str := readFile("./jssdk/token.txt")
-	//解析json串
+	// 解析json串
 	j := json2{}
 	err := json.Unmarshal([]byte(json_str), &j)
 	if err != nil {
@@ -167,13 +167,13 @@ func getAccessToken() string {
 	expire_time := j.Expire_time
 	access_token := j.Access_token
 	if expire_time < timestamp() {
-		//获取新token
+		// 获取新token
 		url := fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s", appid, appsecret)
 		resp, _ := http.Get(url)
 
 		body, _ := ioutil.ReadAll(resp.Body)
 		fmt.Println(string(body))
-		//解析body
+		// 解析body
 		token := token{}
 		err := json.Unmarshal([]byte(body), &token)
 		if err != nil {
@@ -201,6 +201,7 @@ func timestamp() int {
 	return my_timestamp
 }
 
+// 获取随机字符串
 func getRandomString(l int) string {
 	str := "0123456789abcdefghijklmnopqrstuvwxyz"
 	bytes := []byte(str)
@@ -211,8 +212,10 @@ func getRandomString(l int) string {
 	}
 	return string(result)
 }
+
+// sha1加密
 func my_sha1(data string) string {
-	t := sha1.New();
-	io.WriteString(t, data);
-	return fmt.Sprintf("%x", t.Sum(nil));
+	t := sha1.New()
+	io.WriteString(t, data)
+	return fmt.Sprintf("%x", t.Sum(nil))
 }
